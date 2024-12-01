@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 	"slices"
 	"strings"
 
@@ -27,8 +25,7 @@ func part1() int {
 		var int1, int2 int
 		_, err := fmt.Sscanf(line, "%d %d", &int1, &int2)
 		if err != nil {
-			log.Println("Error: ", err)
-			os.Exit(1)
+			panic(err)
 		}
 
 		first = append(first, int1)
@@ -66,8 +63,7 @@ func part2() int {
 		var int1, int2 int
 		_, err := fmt.Sscanf(line, "%d %d", &int1, &int2)
 		if err != nil {
-			log.Println("Error: ", err)
-			os.Exit(1)
+			panic(err)
 		}
 
 		first = append(first, int1)

@@ -2,27 +2,25 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"os"
+	"strings"
 	"time"
 )
 
 func ReadFile(filename string) string {
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		log.Println("Error: ", err)
-		os.Exit(1)
+		panic(err)
 	}
 
-	return string(data)
+	return strings.TrimSpace(string(data))
 }
 
-type FunctionType func() int
-
-func Run(part int, function FunctionType) {
+func Run(part int, function func() int) {
 	start := time.Now()
 	output := function()
 	duration := time.Since(start)
+
 	green := "\033[32m"
 	reset := "\033[0m"
 
