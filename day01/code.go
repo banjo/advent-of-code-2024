@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/banjo/advent-of-code-2024/utils"
@@ -22,11 +22,10 @@ func part1() int {
 			continue
 		}
 
-		var int1, int2 int
-		_, err := fmt.Sscanf(line, "%d %d", &int1, &int2)
-		if err != nil {
-			panic(err)
-		}
+		fields := strings.Fields(line)
+
+		int1, _ := strconv.Atoi(fields[0])
+		int2, _ := strconv.Atoi(fields[1])
 
 		first = append(first, int1)
 		second = append(second, int2)
@@ -60,27 +59,18 @@ func part2() int {
 			continue
 		}
 
-		var int1, int2 int
-		_, err := fmt.Sscanf(line, "%d %d", &int1, &int2)
-		if err != nil {
-			panic(err)
-		}
+		fields := strings.Fields(line)
+
+		int1, _ := strconv.Atoi(fields[0])
+		int2, _ := strconv.Atoi(fields[1])
 
 		first = append(first, int1)
 		second = append(second, int2)
 	}
 
 	hashmap := make(map[int]int)
-	for _, num := range first {
-		if _, exists := hashmap[num]; !exists {
-			hashmap[num] = 0
-		}
-	}
-
 	for _, val := range second {
-		if _, exists := hashmap[val]; exists {
-			hashmap[val]++
-		}
+		hashmap[val]++
 	}
 
 	finalVal := 0
