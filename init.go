@@ -29,7 +29,7 @@ func main() {
 	}
 
 	createFile(filepath.Join(dayFolder, "code.go"), codeTemplate())
-	createFile(filepath.Join(dayFolder, "example.txt"), input)
+	createFile(filepath.Join(dayFolder, "input.txt"), input)
 
 	fmt.Printf("Initialized day %s\n", dayNumber)
 }
