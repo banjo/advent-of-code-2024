@@ -17,6 +17,13 @@ func ReadFile(filename string) string {
 	return strings.TrimSpace(string(data))
 }
 
+func WriteFile(filename string, content string) {
+	err := os.WriteFile(filename, []byte(content), 0644)
+	if err != nil {
+		panic(err)
+	}
+}
+
 func MapStringArrayToIntArray(strs []string) []int {
 	ints := make([]int, len(strs))
 
