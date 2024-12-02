@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -14,6 +15,20 @@ func ReadFile(filename string) string {
 	}
 
 	return strings.TrimSpace(string(data))
+}
+
+func MapStringArrayToIntArray(strs []string) []int {
+	ints := make([]int, len(strs))
+
+	for i, level := range strs {
+		intValue, err := strconv.Atoi(level)
+		if err != nil {
+			panic(err)
+		}
+		ints[i] = intValue
+	}
+
+	return ints
 }
 
 func Run(part int, function func() int) {
