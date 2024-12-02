@@ -71,11 +71,13 @@ import (
 )
 
 func part1() int {
+		content := utils.ReadFile("./input.txt")
     fmt.Println("part 1")
     return 0
 }
 
 func part2() int {
+		content := utils.ReadFile("./input.txt")
     fmt.Println("part 2")
     return 0
 }
