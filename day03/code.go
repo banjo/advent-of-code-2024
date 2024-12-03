@@ -20,9 +20,23 @@ func part1() int {
 }
 
 func part2() int {
-	// content := utils.ReadFile("./input.txt")
-	// fmt.Println("part 2")
-	return 0
+	content := utils.ReadFile("./input.txt")
+	r, _ := regexp.Compile(`(do\(\))|(don't\(\))|(mul\((\d+),(\d+)\))`)
+	matches := r.FindAllStringSubmatch(content, -1)
+
+	val := 0
+	enabled := true
+	for _, match := range matches {
+		if match[0] == "do()" {
+			enabled = true
+		} else if match[0] == "don't()" {
+			enabled = false
+		} else if enabled {
+			val += utils.ToInt(match[4]) * utils.ToInt(match[5])
+		}
+	}
+
+	return val
 }
 
 func main() {
