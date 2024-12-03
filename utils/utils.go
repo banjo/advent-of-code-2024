@@ -24,15 +24,19 @@ func WriteFile(filename string, content string) {
 	}
 }
 
+func ToInt(str string) int {
+	val, err := strconv.Atoi(str)
+	if err != nil {
+		panic(err)
+	}
+	return val
+}
+
 func MapStringArrayToIntArray(strs []string) []int {
 	ints := make([]int, len(strs))
 
 	for i, level := range strs {
-		intValue, err := strconv.Atoi(level)
-		if err != nil {
-			panic(err)
-		}
-		ints[i] = intValue
+		ints[i] = ToInt(level)
 	}
 
 	return ints
