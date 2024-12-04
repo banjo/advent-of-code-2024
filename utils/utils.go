@@ -3,13 +3,23 @@ package utils
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
 )
 
 func ReadFile(filename string) string {
-	data, err := os.ReadFile(filename)
+	// Get the path of the file that called this function, for debugging purposes
+	_, callername, _, ok := runtime.Caller(1)
+	if !ok {
+		panic("Could not find caller")
+	}
+	dir := filepath.Dir(callername)
+
+	path := filepath.Join(dir, filename)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
