@@ -52,6 +52,17 @@ func MapStringArrayToIntArray(strs []string) []int {
 	return ints
 }
 
+func GetGridFromString(str string) [][]string {
+	lines := strings.Split(str, "\n")
+	grid := make([][]string, len(lines))
+
+	for i, line := range lines {
+		grid[i] = strings.Split(line, "")
+	}
+
+	return grid
+}
+
 func Run(part int, function func() int) {
 	start := time.Now()
 	output := function()

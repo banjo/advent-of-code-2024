@@ -106,14 +106,56 @@ func part1() int {
 	return totalMatches
 }
 
+func isWord(str string) bool {
+	return str == "SAM" || str == "MAS"
+}
+
 func part2() int {
-	// content := utils.ReadFile("./input.txt")
-	// fmt.Println("part 2")
-	return 0
+	content := utils.ReadFile("./input.txt")
+	grid := utils.GetGridFromString(content)
+	maxY := len(grid) - 1
+	maxX := len(grid[0]) - 1
+
+	isOut := func(val int, dir string) bool {
+		if val < 0 {
+			return true
+		}
+
+		if dir == "y" && val > maxY {
+			return true
+		} else if dir == "x" && val > maxX {
+			return true
+		}
+
+		return false
+	}
+
+	isMatch := func(y, x int) bool {
+		if isOut(y+1, "y") || isOut(y-1, "y") || isOut(x+1, "x") || isOut(x-1, "x") {
+			return false
+		}
+
+		first := grid[y-1][x-1] + grid[y][x] + grid[y+1][x+1]
+		second := grid[y+1][x-1] + grid[y][x] + grid[y-1][x+1]
+
+		return isWord(first) && isWord(second)
+	}
+
+	count := 0
+	for y, row := range grid {
+		for x := range row {
+			success := isMatch(y, x)
+
+			if success {
+				count++
+			}
+		}
+	}
+
+	return count
 }
 
 func main() {
 	utils.Run(1, part1)
 	utils.Run(2, part2)
 }
-
