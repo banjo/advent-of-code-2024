@@ -10,7 +10,7 @@ import (
 )
 
 func part1() int {
-	content := utils.ReadFile("input.txt")
+	content := utils.ReadFile("example.txt")
 	lines := strings.Split(content, "\n")
 
 	var first, second []int
