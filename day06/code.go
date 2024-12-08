@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/banjo/advent-of-code-2024/utils"
 )
 
@@ -38,9 +40,89 @@ func part1() int {
 }
 
 func part2() int {
-	// content := utils.ReadFile("./input.txt")
-	// fmt.Println("part 2")
-	return 0
+	content := utils.ReadFile("./example.txt")
+	grid := utils.GetGridFromString(content)
+	start := utils.GetGridPositionByValue(grid, "^")
+
+	visited := make(map[string]int)
+	buffer := []utils.Point{start}
+	direction := utils.North
+	stepsFromStartForObstruction := 0 // start from 0 to just calculate the length at first run
+	currentSteps := 0
+	currentObstructionPoint := utils.Point{X: -1, Y: -1}
+
+	reset := func() {
+		visited = make(map[string]int)
+		buffer = []utils.Point{start}
+		direction = utils.North
+		stepsFromStartForObstruction++
+		currentSteps = 0
+		currentObstructionPoint = utils.Point{X: -1, Y: -1}
+	}
+
+	obstructionCount := 0
+	isDone := false
+	firstRun := true
+	totalLength := 0
+	for !isDone {
+		skipVisitCheck := false
+		for len(buffer) > 0 {
+			current := buffer[0]
+			fmt.Println(current)
+
+			if !skipVisitCheck {
+				// stop if second time visiting a second run
+				if visited[current.String()] == 4 {
+					obstructionCount++
+					reset()
+					break
+				}
+
+				visited[current.String()] += 1
+			}
+
+			currentSteps++
+			next := utils.GetNextPoint(current, direction)
+			val, err := utils.GetGridValue(grid, next)
+			if err != nil {
+
+				if firstRun {
+					totalLength = currentSteps
+					firstRun = false
+				} else if totalLength == stepsFromStartForObstruction {
+					isDone = true
+				}
+
+				reset()
+				break
+			}
+
+			atObstructionPoint := next == currentObstructionPoint
+			if atObstructionPoint && !firstRun {
+				direction = nextDirection(direction)
+				skipVisitCheck = true
+				continue
+			}
+
+			if currentSteps == stepsFromStartForObstruction && start != next && !firstRun {
+				currentObstructionPoint = next
+				direction = nextDirection(direction)
+				skipVisitCheck = true
+				continue
+			}
+
+			if val == "#" {
+				direction = nextDirection(direction)
+				skipVisitCheck = true
+				continue
+			}
+
+			skipVisitCheck = false
+			buffer = append(buffer[1:], next)
+		}
+	}
+
+	return obstructionCount
 }
 
 func main() {
