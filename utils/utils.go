@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+// Functions
+
 func ReadFile(filename string) string {
 	// Get the path of the file that called this function, for debugging purposes
 	_, callername, _, ok := runtime.Caller(1)
@@ -52,6 +54,47 @@ func MapStringArrayToIntArray(strs []string) []int {
 	return ints
 }
 
+// 2d grid
+
+type Point struct {
+	X int
+	Y int
+}
+
+func (p Point) String() string {
+	return fmt.Sprintf("(%d,%d)", p.Y, p.X)
+}
+
+type Direction int
+
+const (
+	North Direction = iota
+	East
+	South
+	West
+)
+
+func GetNextPoint(p Point, d Direction) Point {
+	switch d {
+	case North:
+		p.Y--
+	case East:
+		p.X++
+	case South:
+		p.Y++
+	case West:
+		p.X--
+	}
+	return p
+}
+
+func GetGridValue(grid [][]string, p Point) (string, error) {
+	if p.Y < 0 || p.Y >= len(grid) || p.X < 0 || p.X >= len(grid[p.Y]) {
+		return "", fmt.Errorf("index out of bounds")
+	}
+	return grid[p.Y][p.X], nil
+}
+
 func GetGridFromString(str string) [][]string {
 	lines := strings.Split(str, "\n")
 	grid := make([][]string, len(lines))
@@ -61,6 +104,28 @@ func GetGridFromString(str string) [][]string {
 	}
 
 	return grid
+}
+
+func GetGridPositionByValue(grid [][]string, val string) Point {
+	var start Point
+	for y, row := range grid {
+		for x, p := range row {
+			if p == val {
+				start = Point{X: x, Y: y}
+				break
+			}
+		}
+
+		if start != (Point{}) {
+			break
+		}
+	}
+
+	// if start == (Point{}) {
+	// 	return start, errors.New("Point does not exist")
+	// }
+
+	return start
 }
 
 func HasDuplicates(slice1, slice2 []int) bool {
