@@ -63,6 +63,22 @@ func GetGridFromString(str string) [][]string {
 	return grid
 }
 
+func HasDuplicates(slice1, slice2 []int) bool {
+	elements := make(map[int]bool)
+
+	for _, val := range slice1 {
+		elements[val] = true
+	}
+
+	for _, val := range slice2 {
+		if elements[val] {
+			return true
+		}
+	}
+
+	return false
+}
+
 func Run(part int, function func() int) {
 	start := time.Now()
 	output := function()

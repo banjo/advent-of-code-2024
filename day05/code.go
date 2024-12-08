@@ -6,13 +6,13 @@ import (
 	"github.com/banjo/advent-of-code-2024/utils"
 )
 
-func getRulesAndPages(content string) ([][]int, [][]int, map[int][]int) {
+func getRulesAndUpdates(content string) ([][]int, [][]int, map[int][]int) {
 	lines := strings.Split(content, "\n")
 
 	isRule := true
 
 	var rules [][]int
-	var pages [][]int
+	var updates [][]int
 	rulesMap := make(map[int][]int)
 
 	for _, line := range lines {
@@ -27,38 +27,34 @@ func getRulesAndPages(content string) ([][]int, [][]int, map[int][]int) {
 			rules = append(rules, nums)
 		} else {
 			p := utils.MapStringArrayToIntArray(strings.Split(line, ","))
-			pages = append(pages, p)
+			updates = append(updates, p)
 		}
 
 	}
 
-	return rules, pages, rulesMap
+	return rules, updates, rulesMap
+}
+
+func isValidUpdate(update []int, rulesMap map[int][]int) bool {
+	for idx, page := range update {
+		shouldGoBefore := rulesMap[page]
+		numbersAfter := update[idx+1:]
+
+		if utils.HasDuplicates(shouldGoBefore, numbersAfter) {
+			return false
+		}
+	}
+
+	return true
 }
 
 func part1() int {
 	content := utils.ReadFile("./input.txt")
-	_, listOfPages, rulesMap := getRulesAndPages(content)
+	_, updates, rulesMap := getRulesAndUpdates(content)
 
 	count := 0
-	for _, pages := range listOfPages {
-
-		isValid := true
-		for idx, page := range pages {
-			shouldGoBefore := rulesMap[page]
-			numbersAfter := pages[idx+1:]
-
-			for _, after := range numbersAfter {
-				for _, before := range shouldGoBefore {
-					if before == after {
-						isValid = false
-						break
-					}
-				}
-				if !isValid {
-					break
-				}
-			}
-		}
+	for _, pages := range updates {
+		isValid := isValidUpdate(pages, rulesMap)
 
 		if isValid {
 			middle := pages[len(pages)/2]
@@ -71,13 +67,50 @@ func part1() int {
 }
 
 func part2() int {
-	// content := utils.ReadFile("./input.txt")
-	// fmt.Println("part 2")
-	return 0
+	content := utils.ReadFile("./input.txt")
+	_, updates, rulesMap := getRulesAndUpdates(content)
+
+	var notValid [][]int
+	for _, update := range updates {
+		isValid := isValidUpdate(update, rulesMap)
+
+		if !isValid {
+			notValid = append(notValid, update)
+		}
+
+	}
+
+	count := 0
+	for _, update := range notValid {
+
+		var res []int
+
+		buffer := make([]int, len(update))
+		copy(buffer, update)
+
+		for len(buffer) > 0 {
+			page := buffer[0]
+			numbersAfter := buffer[1:]
+			shouldGoBefore := rulesMap[page]
+
+			if !utils.HasDuplicates(shouldGoBefore, numbersAfter) {
+				res = append(res, page)
+				buffer = buffer[1:]
+			} else {
+				buffer = buffer[1:]
+				buffer = append(buffer, page)
+			}
+
+		}
+
+		middle := res[len(res)/2]
+		count += middle
+	}
+
+	return count
 }
 
 func main() {
 	utils.Run(1, part1)
 	utils.Run(2, part2)
 }
-
