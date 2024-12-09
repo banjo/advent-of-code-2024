@@ -44,6 +44,10 @@ func ToInt(str string) int {
 	return val
 }
 
+func ToString(n int) string {
+	return strconv.Itoa(n)
+}
+
 func MapStringArrayToIntArray(strs []string) []int {
 	ints := make([]int, len(strs))
 

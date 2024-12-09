@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/banjo/advent-of-code-2024/utils"
@@ -72,10 +73,58 @@ func part1() int {
 	return totalSum
 }
 
+func generateTernaryPossibilities(n int) []string {
+	var possibilities []string
+	total := int(math.Pow(3, float64(n)))
+
+	for i := 0; i < total; i++ {
+		ternaryStr := ""
+		num := i
+		for j := 0; j < n; j++ {
+			ternaryStr = fmt.Sprintf("%d", num%3) + ternaryStr
+			num /= 3
+		}
+		possibilities = append(possibilities, ternaryStr)
+	}
+
+	return possibilities
+}
+
 func part2() int {
-	// content := utils.ReadFile("./input.txt")
-	// fmt.Println("part 2")
-	return 0
+	content := utils.ReadFile("./input.txt")
+	parsed := parse(content)
+
+	totalSum := 0
+	for _, p := range parsed {
+		sum := p.sum
+
+		operatorPlaces := len(p.nums) - 1
+		possibilities := generateTernaryPossibilities(operatorPlaces)
+
+		for _, ternary := range possibilities {
+			result := p.nums[0]
+			for idx, num := range p.nums[1:] {
+				switch ternary[idx] {
+				case '0':
+					result += num
+				case '1':
+					result *= num
+				case '2':
+					resStr := utils.ToString(result)
+					numStr := utils.ToString(num)
+					result = utils.ToInt(resStr + numStr)
+				}
+			}
+
+			if result == sum {
+				totalSum += sum
+				break
+			}
+		}
+
+	}
+
+	return totalSum
 }
 
 func main() {
