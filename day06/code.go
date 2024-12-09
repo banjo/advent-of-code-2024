@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/banjo/advent-of-code-2024/utils"
 )
 
@@ -40,7 +38,7 @@ func part1() int {
 }
 
 func part2() int {
-	content := utils.ReadFile("./example.txt")
+	content := utils.ReadFile("./input.txt")
 	grid := utils.GetGridFromString(content)
 	start := utils.GetGridPositionByValue(grid, "^")
 
@@ -68,7 +66,6 @@ func part2() int {
 		skipVisitCheck := false
 		for len(buffer) > 0 {
 			current := buffer[0]
-			fmt.Println(current)
 
 			if !skipVisitCheck {
 				// stop if second time visiting a second run
@@ -104,7 +101,8 @@ func part2() int {
 				continue
 			}
 
-			if currentSteps == stepsFromStartForObstruction && start != next && !firstRun {
+			notVisited := visited[next.String()] == 0
+			if currentSteps == stepsFromStartForObstruction && start != next && notVisited && !firstRun {
 				currentObstructionPoint = next
 				direction = nextDirection(direction)
 				skipVisitCheck = true
