@@ -127,7 +127,79 @@ func part2() int {
 	return totalSum
 }
 
+type IntOperation func(int, int) int
+
+func traverse(target int, sum int, remaining []int, operations []IntOperation) bool {
+	if len(remaining) == 0 {
+		return sum == target
+	}
+
+	if sum > target {
+		return false
+	}
+
+	upcoming := remaining[0]
+	newRemaining := remaining[1:]
+	isCorrect := false
+	for _, o := range operations {
+		newSum := o(sum, upcoming)
+		matches := traverse(target, newSum, newRemaining, operations)
+		if matches {
+			isCorrect = true
+		}
+	}
+
+	return isCorrect
+}
+
+func part1Traverse() int {
+	content := utils.ReadFile("./input.txt")
+	parsed := parse(content)
+
+	add := func(a, b int) int { return a + b }
+	multiply := func(a, b int) int { return a * b }
+	operations := []IntOperation{add, multiply}
+
+	sum := 0
+	for _, p := range parsed {
+		success := traverse(p.sum, 0, p.nums, operations)
+		if success {
+			sum += p.sum
+		}
+	}
+	return sum
+}
+
+func part2Traverse() int {
+	content := utils.ReadFile("./input.txt")
+	parsed := parse(content)
+
+	add := func(a, b int) int { return a + b }
+	multiply := func(a, b int) int { return a * b }
+	combine := func(a, b int) int {
+		resStr := utils.ToString(a)
+		numStr := utils.ToString(b)
+		result := utils.ToInt(resStr + numStr)
+		return result
+	}
+	operations := []IntOperation{add, multiply, combine}
+
+	sum := 0
+	for _, p := range parsed {
+		success := traverse(p.sum, 0, p.nums, operations)
+		if success {
+			sum += p.sum
+		}
+	}
+	return sum
+}
+
 func main() {
+	fmt.Println("Brute")
 	utils.Run(1, part1)
 	utils.Run(2, part2)
+
+	fmt.Println("\nRecursive")
+	utils.Run(1, part1Traverse)
+	utils.Run(2, part2Traverse)
 }
