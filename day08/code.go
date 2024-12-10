@@ -42,6 +42,28 @@ func calculateAntinodes(a, b Antenna) []utils.Point {
 	return []utils.Point{aPoint, bPoint}
 }
 
+func calculateManyAntinodes(a, b Antenna, amount int) []utils.Point {
+	yDiff := a.y - b.y
+	xDiff := a.x - b.x
+	firstStart := utils.Point{X: b.x, Y: b.y}
+	antinodes := []utils.Point{firstStart}
+	for range amount {
+		latest := antinodes[len(antinodes)-1]
+		point := utils.Point{Y: latest.Y - yDiff, X: latest.X - xDiff}
+		antinodes = append(antinodes, point)
+	}
+
+	secondStart := utils.Point{X: a.x, Y: a.y}
+	antinodes = append(antinodes, secondStart)
+	for range amount {
+		latest := antinodes[len(antinodes)-1]
+		point := utils.Point{Y: latest.Y + yDiff, X: latest.X + xDiff}
+		antinodes = append(antinodes, point)
+	}
+
+	return antinodes
+}
+
 func part1() int {
 	content := utils.ReadFile("./input.txt")
 	grid := utils.GetGridFromString(content)
@@ -74,9 +96,34 @@ func part1() int {
 }
 
 func part2() int {
-	// content := utils.ReadFile("./input.txt")
-	// fmt.Println("part 2")
-	return 0
+	content := utils.ReadFile("./input.txt")
+	grid := utils.GetGridFromString(content)
+	antennaMap := parse(content)
+
+	allAntinodes := make(map[utils.Point]bool)
+	for _, antennas := range antennaMap {
+		buffer := make([]Antenna, len(antennas))
+		copy(buffer, antennas)
+
+		for len(buffer) > 0 {
+			current := buffer[0]
+			rest := buffer[1:]
+
+			for _, sibling := range rest {
+				antinodes := calculateManyAntinodes(current, sibling, 50)
+				for _, a := range antinodes {
+					_, err := utils.GetGridValue(grid, a)
+					if err == nil {
+						allAntinodes[a] = true
+					}
+				}
+			}
+
+			buffer = rest
+		}
+	}
+
+	return len(allAntinodes)
 }
 
 func main() {
