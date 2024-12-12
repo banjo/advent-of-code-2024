@@ -58,6 +58,16 @@ func MapStringArrayToIntArray(strs []string) []int {
 	return ints
 }
 
+func PointerArrayToIntArray(s []*int) []int {
+	a := make([]int, len(s))
+	for idx, val := range s {
+		if val != nil {
+			a[idx] = *val
+		}
+	}
+	return a
+}
+
 // 2d grid
 
 type Point struct {
