@@ -127,6 +127,8 @@ func fragmentByFiles(s []*int) []int {
 			continue
 		}
 
+		// FILE: 10
+
 		fileSpace := 0
 		fileSlice := s[:end+1] // include current
 		for idx := range fileSlice {
@@ -142,7 +144,7 @@ func fragmentByFiles(s []*int) []int {
 
 		start = 0
 		for {
-			if start > len(s)-1 {
+			if start > len(s)-1 { // len of fileSlice or s?
 				end -= fileSpace
 				break
 			}
@@ -163,14 +165,14 @@ func fragmentByFiles(s []*int) []int {
 				freeSpace++
 			}
 
-			if start+freeSpace >= end {
+			if start+freeSpace > end {
 				end -= fileSpace
 				break
 			}
 
 			if fileSpace > freeSpace {
 				// look for new file block
-				start += fileSpace
+				start += freeSpace
 				continue
 			}
 
