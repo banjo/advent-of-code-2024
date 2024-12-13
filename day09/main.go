@@ -144,7 +144,7 @@ func fragmentByFiles(s []*int) []int {
 
 		start = 0
 		for {
-			if start > len(s)-1 { // len of fileSlice or s?
+			if start > len(fileSlice)-1 { // len of fileSlice or s?
 				end -= fileSpace
 				break
 			}
