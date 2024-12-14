@@ -65,27 +65,32 @@ func codeTemplate() string {
 	return `package main
 
 import (
-    "fmt"
+	"fmt"
 
-    "github.com/banjo/advent-of-code-2024/utils"
+	"github.com/banjo/advent-of-code-2024/utils"
 )
 
-func part1() int {
-		content := utils.ReadFile("./input.txt")
-    fmt.Println("part 1")
-    return 0
+func part1(file string) int {
+	content := utils.ReadFile(file)
+	fmt.Println("part 1")
+	return 0
 }
 
-func part2() int {
-		content := utils.ReadFile("./input.txt")
-    fmt.Println("part 2")
-    return 0
+func part2(file string) int {
+	content := utils.ReadFile(file)
+	fmt.Println("part 2")
+	return 0
 }
 
 func main() {
-    utils.Run(1, part1)
-    utils.Run(2, part2)
-}`
+	utils.Run(1, func() int {
+		return part1("./input.txt")
+	})
+	utils.Run(2, func() int {
+		return part2("./input.txt")
+	})
+}
+`
 }
 
 func getInput(day string) string {
