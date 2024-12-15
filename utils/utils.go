@@ -71,12 +71,16 @@ func PointerArrayToIntArray(s []*int) []int {
 // 2d grid
 
 type Point struct {
-	X int
-	Y int
+	Value *string
+	X     int
+	Y     int
 }
 
 func (p Point) String() string {
-	return fmt.Sprintf("(%d,%d)", p.Y, p.X)
+	if p.Value == nil {
+		return fmt.Sprintf(`(y:%d, x:%d, val:nil)`, p.Y, p.X)
+	}
+	return fmt.Sprintf(`(y:%d, x:%d, val:%s)`, p.Y, p.X, *p.Value)
 }
 
 type Direction int
@@ -102,11 +106,42 @@ func GetNextPoint(p Point, d Direction) Point {
 	return p
 }
 
+func GetPossibleNextPoints(p Point) []Point {
+	var possiblePoints []Point
+	for d := North; d <= West; d++ {
+		n := GetNextPoint(p, d)
+		possiblePoints = append(possiblePoints, n)
+	}
+
+	return possiblePoints
+}
+
 func GetGridValue(grid [][]string, p Point) (string, error) {
 	if p.Y < 0 || p.Y >= len(grid) || p.X < 0 || p.X >= len(grid[p.Y]) {
 		return "", fmt.Errorf("index out of bounds")
 	}
 	return grid[p.Y][p.X], nil
+}
+
+func FilterValidPointsInGrid(grid [][]string, points []Point) []Point {
+	var possiblePoints []Point
+	for _, p := range points {
+		val, err := GetGridValue(grid, p)
+		if err != nil {
+			continue
+		}
+
+		// set value as well
+		p.Value = &val
+		possiblePoints = append(possiblePoints, p)
+	}
+
+	return possiblePoints
+}
+
+func SetPointValueInGrid(grid [][]string, p *Point) {
+	val := grid[p.Y][p.X]
+	p.Value = &val
 }
 
 func GetGridFromString(str string) [][]string {
@@ -125,7 +160,7 @@ func GetGridPositionByValue(grid [][]string, val string) Point {
 	for y, row := range grid {
 		for x, p := range row {
 			if p == val {
-				start = Point{X: x, Y: y}
+				start = Point{X: x, Y: y, Value: &val}
 				break
 			}
 		}
@@ -135,11 +170,21 @@ func GetGridPositionByValue(grid [][]string, val string) Point {
 		}
 	}
 
-	// if start == (Point{}) {
-	// 	return start, errors.New("Point does not exist")
-	// }
-
 	return start
+}
+
+func GetGridPositionsByValue(grid [][]string, val string) []Point {
+	var res []Point
+	for y, row := range grid {
+		for x, p := range row {
+			if p == val {
+				res = append(res, Point{X: x, Y: y, Value: &val})
+				continue
+			}
+		}
+	}
+
+	return res
 }
 
 func HasDuplicates(slice1, slice2 []int) bool {
