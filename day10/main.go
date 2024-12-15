@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/banjo/advent-of-code-2024/utils"
 )
 
@@ -65,23 +63,55 @@ func part1(file string) int {
 		}
 
 		score += len(scoreVisits)
-
 	}
 
 	return score
 }
 
 func part2(file string) int {
-	// content := utils.ReadFile(file)
-	fmt.Println(file)
-	return 0
+	content := utils.ReadFile(file)
+	grid := utils.GetGridFromString(content)
+	trailheads := utils.GetGridPositionsByValue(grid, "0")
+
+	score := 0
+	for _, p := range trailheads {
+		scoreVisits := make(map[string]int)
+
+		var buffer []utils.Point
+		buffer = append(buffer, p)
+
+		for len(buffer) > 0 {
+			current := buffer[0]
+			val := utils.ToInt(*current.Value)
+
+			if val == 9 {
+				scoreVisits[current.String()] += 1
+				buffer = buffer[1:]
+				continue
+			}
+
+			allPoints := utils.GetPossibleNextPoints(current)
+			validPoints := utils.FilterValidPointsInGrid(grid, allPoints)
+
+			filtered := filterPointsByRules(current, validPoints)
+			buffer = append(buffer, filtered...)
+
+			buffer = buffer[1:]
+		}
+
+		for _, s := range scoreVisits {
+			score += s
+		}
+	}
+
+	return score
 }
 
 func main() {
 	utils.Run(1, func() int {
 		return part1("./input.txt")
 	})
-	// utils.Run(2, func() int {
-	// 	return part2("./input.txt")
-	// })
+	utils.Run(2, func() int {
+		return part2("./input.txt")
+	})
 }
