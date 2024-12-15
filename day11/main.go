@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/banjo/advent-of-code-2024/utils"
@@ -18,16 +19,9 @@ func part1(content string) int {
 				continue
 			}
 
-			l := len(utils.ToString(stone))
-			isEven := l%2 == 0
-
-			if isEven {
-				half := l / 2
-				firstHalf := utils.ToString(stone)[:half]
-				secondHalf := utils.ToString(stone)[half:]
-
-				updated = append(updated, utils.ToInt(firstHalf))
-				updated = append(updated, utils.ToInt(secondHalf))
+			if hasEvenDigits(stone) {
+				splitted := split(stone)
+				updated = append(updated, splitted...)
 				continue
 			}
 
@@ -40,10 +34,69 @@ func part1(content string) int {
 	return len(s)
 }
 
-func part2(_ string) int {
-	// content := utils.ReadFile(file)
-	// fmt.Println("part 2")
-	return 0
+func hasEvenDigits(i int) bool {
+	l := len(utils.ToString(i))
+	isEven := l%2 == 0
+	return isEven
+}
+
+func split(i int) []int {
+	s := utils.ToString(i)
+	l := len(s)
+	half := l / 2
+	firstHalf := utils.ToString(i)[:half]
+	secondHalf := utils.ToString(i)[half:]
+	return []int{utils.ToInt(firstHalf), utils.ToInt(secondHalf)}
+}
+
+func getKey(stone int, blinks int) string {
+	return fmt.Sprintf("%d-%d", stone, blinks)
+}
+
+func blink(stone int, blinks int, memo map[string]int) int {
+	if blinks == 0 {
+		return 1
+	}
+
+	key := getKey(stone, blinks)
+
+	if prev, exists := memo[key]; exists {
+		return prev
+	}
+
+	if stone == 0 {
+		res := blink(1, blinks-1, memo)
+		memo[key] = res
+		return res
+	}
+
+	if hasEvenDigits(stone) {
+		splitted := split(stone)
+
+		res1 := blink(splitted[0], blinks-1, memo)
+		res2 := blink(splitted[1], blinks-1, memo)
+
+		t := res1 + res2
+		memo[key] = t
+		return t
+	}
+
+	res := blink(stone*2024, blinks-1, memo)
+	memo[key] = res
+	return res
+}
+
+func part2(content string) int {
+	strs := strings.Fields(content)
+	s := utils.MapStringArrayToIntArray(strs)
+	memo := make(map[string]int)
+
+	count := 0
+	for _, stone := range s {
+		count += blink(stone, 75, memo)
+	}
+
+	return count
 }
 
 func main() {
@@ -52,7 +105,7 @@ func main() {
 		return part1(content)
 	})
 	utils.Run(2, func() int {
-		content := utils.ReadFile("./example.txt")
+		content := utils.ReadFile("./input.txt")
 		return part2(content)
 	})
 }
