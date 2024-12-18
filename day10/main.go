@@ -53,7 +53,7 @@ func part1(file string) int {
 				continue
 			}
 
-			allPoints := utils.GetPossibleNextPoints(current)
+			allPoints := utils.GetPointsAround(current)
 			validPoints := utils.FilterValidPointsInGrid(grid, allPoints)
 
 			filtered := filterPointsByRules(current, validPoints)
@@ -90,7 +90,7 @@ func part2(file string) int {
 				continue
 			}
 
-			allPoints := utils.GetPossibleNextPoints(current)
+			allPoints := utils.GetPointsAround(current)
 			validPoints := utils.FilterValidPointsInGrid(grid, allPoints)
 
 			filtered := filterPointsByRules(current, validPoints)

@@ -103,13 +103,28 @@ func GetNextPoint(p Point, d Direction) Point {
 	case West:
 		p.X--
 	}
+	p.Value = nil
 	return p
 }
 
-func GetPossibleNextPoints(p Point) []Point {
+func GetPointsAround(p Point) []Point {
 	var possiblePoints []Point
 	for d := North; d <= West; d++ {
 		n := GetNextPoint(p, d)
+		possiblePoints = append(possiblePoints, n)
+	}
+
+	return possiblePoints
+}
+
+func GetPointsAroundWithValue(grid [][]string, p Point) []Point {
+	var possiblePoints []Point
+	for d := North; d <= West; d++ {
+		n := GetNextPoint(p, d)
+		val, err := GetGridValue(grid, n)
+		if err == nil {
+			n.Value = &val
+		}
 		possiblePoints = append(possiblePoints, n)
 	}
 
@@ -153,6 +168,17 @@ func GetGridFromString(str string) [][]string {
 	}
 
 	return grid
+}
+
+type GridCallback func(p Point)
+
+func IterateGrid(grid [][]string, callback GridCallback) {
+	for y, row := range grid {
+		for x, val := range row {
+			p := Point{Y: y, X: x, Value: &val}
+			callback(p)
+		}
+	}
 }
 
 func GetGridPositionByValue(grid [][]string, val string) Point {
@@ -200,6 +226,16 @@ func HasDuplicates(slice1, slice2 []int) bool {
 		}
 	}
 
+	return false
+}
+
+func ContainsByStringEq(slice []Point, p Point) bool {
+	pString := p.String()
+	for _, v := range slice {
+		if v.String() == pString {
+			return true
+		}
+	}
 	return false
 }
 
